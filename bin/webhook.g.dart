@@ -1,16 +1,16 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'server.dart';
+part of 'webhook.dart';
 
 // **************************************************************************
 // ShelfRouterGenerator
 // **************************************************************************
 
-Router _$WebHookServiceRouter(WebHookService service) {
+Router _$WebHookControllerRouter(WebHookController service) {
   final router = Router();
   router.add(
     'POST',
-    r'/webhook',
+    r'/webhooks',
     service.echo,
   );
   return router;

@@ -3,3 +3,11 @@
 .dart_tool/
 
 .vscode/
+
+# "JSON to Dart Model" generator tracker files locations.
+/.json_models/
+models.jsonc
+
+logs.txt
+
+configuration.json
