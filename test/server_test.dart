@@ -51,9 +51,26 @@ void main() {
     });
     test('Test ConfigurationService.findEntry', () {
       expect(configurationService.findEntry("foo", "bar"), null);
-      expect(configurationService.findEntry("centmeteenvin/foo", "/bar"), ConfigurationEntry(repositoryName: "centmeteenvin/foo", branch: "/bar", executable: "test/resources/test.bat"));
+      expect(configurationService.findEntry("centmeteenvin/foo", "/bar"), ConfigurationEntry(repositoryName: "centmeteenvin/foo", branch: "/bar", executable: "test/resources/test.cmd"));
     });
   });
+
+  group('Test ProcessService', () {
+  test('Test ProcessService().launch()', () async {
+    final Stopwatch stopwatch = Stopwatch()..start();
+    final stream = await ProcessService().launch("test/resources/test.cmd");
+    String data = "";
+    await for (final line in stream) {
+      data += line;
+    }
+    stopwatch.stop();
+    logger.i(data);
+    expect(data.contains("Hello world!"), true);
+    expect(data.contains("exit"), true);
+    expect(stopwatch.elapsed >= Duration(seconds: 1), true);
+  });
+  });
+
 }
 
 class TestWebhookService extends Service {

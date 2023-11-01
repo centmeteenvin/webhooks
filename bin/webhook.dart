@@ -73,8 +73,10 @@ class ConfigurationService {
 }
 
 class ProcessService {
+  ///Takes a pathToExecutable relative from the working directory
   Future<Stream> launch(String pathToExecutable) async {
-    final process = await Process.start(pathToExecutable, []);
+    final process = await Process.start("${Directory.current.path}/$pathToExecutable", [], mode: ProcessStartMode.detachedWithStdio);
+    process.stderr.transform(utf8.decoder).forEach((element) {logger.e(element);});
     return process.stdout.transform(utf8.decoder);
   }
 }
