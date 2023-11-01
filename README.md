@@ -1,49 +1,23 @@
-A server app built using [Shelf](https://pub.dev/packages/shelf),
-configured to enable running with [Docker](https://www.docker.com/).
+# Github Webhooks Server
+A simple dart program that can execute a simple script on activation of the POST /webhook endpoint.
 
-This sample code handles HTTP GET requests to `/` and `/echo/<message>`
+## How it works
+The program reads in the configuration.json file. You can find an the template file as `configuration.TEMPLATE.json`.
+In this file you define which repository and branch on that repository to listen to. When a push commit on the remote activates the webhook it will parse the json into a custom object.
+It will compare the incoming repository plus branch condition to execute the corresponding script. This script will run detached from the dart program instance.
 
-# Running the sample
-
-## Running with the Dart SDK
-
-You can run the example with the [Dart SDK](https://dart.dev/get-dart)
-like this:
-
+## How to start
+Create a configuration.json file, e.g:
 ```
-$ dart run bin/server.dart
-Server listening on port 8080
+{
+    "configuration_entries": [
+        {
+            "repository_name":"centmeteenvin/foo",
+            "branch":"/bar",
+            "executable":"test/resources/test.cmd"
+        }
+    ]
+}
 ```
-
-And then from a second terminal:
-```
-$ curl http://0.0.0.0:8080
-Hello, World!
-$ curl http://0.0.0.0:8080/echo/I_love_Dart
-I_love_Dart
-```
-
-## Running with Docker
-
-If you have [Docker Desktop](https://www.docker.com/get-started) installed, you
-can build and run with the `docker` command:
-
-```
-$ docker build . -t myserver
-$ docker run -it -p 8080:8080 myserver
-Server listening on port 8080
-```
-
-And then from a second terminal:
-```
-$ curl http://0.0.0.0:8080
-Hello, World!
-$ curl http://0.0.0.0:8080/echo/I_love_Dart
-I_love_Dart
-```
-
-You should see the logging printed in the first terminal:
-```
-2021-05-06T15:47:04.620417  0:00:00.000158 GET     [200] /
-2021-05-06T15:47:08.392928  0:00:00.001216 GET     [200] /echo/I_love_Dart
-```
+Then use `dart run bin/server.dart [ip-address] [port]`.
+Any script will be run detached from the dart program itself. The stderr and stdout will print to console.
