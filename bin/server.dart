@@ -8,7 +8,7 @@ import 'package:shelf_router/shelf_router.dart';
 
 part 'server.g.dart';
 
-final Logger logger= Logger(level: Level.info, filter: ProductionFilter());
+final Logger logger= Logger(level: Level.info, filter: ProductionFilter(), output: FileOutput(overrideExisting: true, file: File("logs.txt")));
 
 class WebHookService {
   Router get router => _$WebHookServiceRouter(this);
@@ -17,7 +17,6 @@ class WebHookService {
   Future<Response> echo(Request request) async {
     final body = await request.readAsString();
     logger.i(body);
-    print(body);
     return Response.ok(body);
   }
 }
