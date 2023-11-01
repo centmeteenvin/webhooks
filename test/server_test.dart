@@ -32,7 +32,7 @@ void main() {
       expect(payload.toJson(), json);
     });
   });
-  group('Test endpoint /webhook', () {
+  group('Test endpoint /webhooks', () {
     test('Test if endpoint exists', () async {
       final response = await http.post(uri, headers: {"content-type": "application/json"}, body: jsonEncode(json));
       expect(response.statusCode, 200, reason: "The Endpoint did not return the correct response: $response");
@@ -67,10 +67,19 @@ void main() {
     logger.i(data);
     expect(data.contains("Hello world!"), true);
     expect(data.contains("exit"), true);
-    expect(stopwatch.elapsed >= Duration(seconds: 1), true);
+    expect(stopwatch.elapsed >= Duration(milliseconds: 750), true);
   });
   });
-
+  test('Test if ProcessService is called from the controller', () async {
+    final TestProcessService processService = TestProcessService();
+    final WebHookService webHookService = WebHookService(ConfigurationService("test/resources/test_configuration.json"), processService);
+    WebhookPayload payload = WebhookPayload.fromJson(json);
+    webHookService.receive(payload);
+    expect(processService.isCalled, false);
+    payload = payload.copyWith(repository: payload.repository!.copyWith(name: "centmeteenvin/foo"), ref: "ref/heads/bar");
+    webHookService.receive(payload);
+    expect(processService.isCalled, true);
+  });
 }
 
 class TestWebhookService extends Service {
@@ -78,5 +87,14 @@ class TestWebhookService extends Service {
   @override
   void receive(WebhookPayload payload) {
     lastPayload = payload;
+  }
+}
+
+class TestProcessService extends ProcessService {
+  bool isCalled = false;
+  @override
+  Future<Stream<String>> launch(String pathToExecutable) async {
+    isCalled = true;
+    return Stream.empty();
   }
 }

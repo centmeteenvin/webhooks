@@ -10,7 +10,7 @@ Router _$WebHookControllerRouter(WebHookController service) {
   final router = Router();
   router.add(
     'POST',
-    r'/webhook',
+    r'/webhooks',
     service.echo,
   );
   return router;

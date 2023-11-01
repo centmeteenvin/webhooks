@@ -3,7 +3,7 @@
         {
             "repository_name":"centmeteenvin/foo",
             "branch":"/bar",
-            "executable":"test/resources/test.bat"
+            "executable":"test/resources/test.cmd"
         }
     ]
 }

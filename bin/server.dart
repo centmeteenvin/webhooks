@@ -15,14 +15,17 @@ final Logger logger = Logger(
 void main(List<String> args) async {
   final ip = InternetAddress.anyIPv4;
   final port = int.parse(args[1]);
-  final WebHookController controller = WebHookController(WebHookService(ConfigurationService("configuration.json")));
+  final WebHookController controller = WebHookController(
+    WebHookService(
+      ConfigurationService("configuration.json"),
+      ProcessService(),
+    ),
+  );
   hotreload.withHotreload(() => createServer(ip, port, controller));
 }
 
-Future<HttpServer> createServer(
-    InternetAddress ip, int port, Controller controller) async {
-  final handler =
-      Pipeline().addMiddleware(logRequests()).addHandler(controller.router);
+Future<HttpServer> createServer(InternetAddress ip, int port, Controller controller) async {
+  final handler = Pipeline().addMiddleware(logRequests()).addHandler(controller.router);
   final server = await serve(handler, ip, port);
   logger.i('Listener Created on ${server.address}:${server.port}.');
   return server;
