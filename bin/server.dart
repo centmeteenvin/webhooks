@@ -13,8 +13,12 @@ final Logger logger = Logger(
     filter: ProductionFilter(),
     output: FileOutput(overrideExisting: true, file: File("logs.txt")));
 
-class WebHookService {
-  Router get router => _$WebHookServiceRouter(this);
+abstract class Controller {
+  Router get router;
+}
+class WebHookController extends Controller {
+  @override
+  Router get router => _$WebHookControllerRouter(this);
 
   @Route.post('/webhook')
   Future<Response> echo(Request request) async {
@@ -31,12 +35,9 @@ void main(List<String> args) async {
 }
 
 Future<HttpServer> createServer(InternetAddress ip, int port) async {
-  final service = WebHookService();
-  // Configure a pipeline that logs requests.
+  final Controller controller = WebHookController();
   final handler =
-      Pipeline().addMiddleware(logRequests()).addHandler(service.router);
-
-  // For running in containers, we respect the PORT environment variable.
+      Pipeline().addMiddleware(logRequests()).addHandler(controller.router);
   final server = await serve(handler, ip, port);
   logger.i('Listener Created on ${server.address}:${server.port}.');
   return server;

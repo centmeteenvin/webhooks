@@ -100,7 +100,7 @@ Map<String, dynamic> _$$RepositoryImplToJson(_$RepositoryImpl instance) =>
       'name': instance.name,
       'full_name': instance.fullName,
       'private': instance.private,
-      'owner': instance.owner,
+      'owner': instance.owner?.toJson(),
       'html_url': instance.htmlUrl,
       'description': instance.description,
       'fork': instance.fork,

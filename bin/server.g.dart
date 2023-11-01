@@ -6,7 +6,7 @@ part of 'server.dart';
 // ShelfRouterGenerator
 // **************************************************************************
 
-Router _$WebHookServiceRouter(WebHookService service) {
+Router _$WebHookControllerRouter(WebHookController service) {
   final router = Router();
   router.add(
     'POST',
