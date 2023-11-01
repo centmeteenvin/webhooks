@@ -1,0 +1,9 @@
+{
+    "configuration_entries": [
+        {
+            "repository_name":"centmeteenvin/foo",
+            "branch":"/bar",
+            "executable":"test/resources/test.bat"
+        }
+    ]
+}

@@ -7,21 +7,20 @@ import 'package:shelf_hotreload/shelf_hotreload.dart' as hotreload;
 
 import 'webhook.dart';
 
-
 final Logger logger = Logger(
-    level: Level.info,
-    filter: ProductionFilter(),
-    output: FileOutput(overrideExisting: true, file: File("logs.txt")));
-
+  level: Level.info,
+  filter: ProductionFilter(),
+);
 
 void main(List<String> args) async {
   final ip = InternetAddress.anyIPv4;
   final port = int.parse(args[1]);
-  final WebHookController controller = WebHookController(WebHookService());
+  final WebHookController controller = WebHookController(WebHookService(ConfigurationService("configuration.json")));
   hotreload.withHotreload(() => createServer(ip, port, controller));
 }
 
-Future<HttpServer> createServer(InternetAddress ip, int port, Controller controller) async {
+Future<HttpServer> createServer(
+    InternetAddress ip, int port, Controller controller) async {
   final handler =
       Pipeline().addMiddleware(logRequests()).addHandler(controller.router);
   final server = await serve(handler, ip, port);
