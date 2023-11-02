@@ -46,7 +46,7 @@ class WebHookService extends Service {
   @override
   void receive(WebhookPayload payload) async {
     logger.i("Received json: $payload");
-    final ConfigurationEntry? configurationEntry = _configurationService.findEntry(payload.repository!.name!, payload.ref!.replaceAll("refs/head", ""));
+    final ConfigurationEntry? configurationEntry = _configurationService.findEntry(payload.repository!.fullName!, payload.ref!.replaceAll("refs/head", ""));
     if (configurationEntry == null) {
       logger.i("""
       No configuration was found for the following payload:
