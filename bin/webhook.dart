@@ -42,17 +42,23 @@ class WebHookService extends Service {
   final ConfigurationService _configurationService;
   final ProcessService _processService;
   WebHookService(this._configurationService, this._processService);
-  
+
   @override
   void receive(WebhookPayload payload) async {
     logger.i("Received json: $payload");
     final ConfigurationEntry? configurationEntry = _configurationService.findEntry(payload.repository!.name!, payload.ref!.replaceAll("refs/head", ""));
     if (configurationEntry == null) {
-      logger.i("No Configuration was found for the following payload: $payload");
+      logger.i("""
+      No configuration was found for the following payload:
+      name: ${payload.repository!.name}
+      ref: ${payload.ref}
+""");
       return;
     }
     final stream = await _processService.launch(configurationEntry.executable!);
-    await stream.forEach((element) {logger.i("The executable is returning: $element");});
+    await stream.forEach((element) {
+      logger.i("The executable is returning: $element");
+    });
     logger.i("Finished process for: $configurationEntry");
   }
 }
@@ -62,9 +68,11 @@ class ConfigurationService {
 
   ConfigurationService(String configurationFilePath) {
     final content = File(configurationFilePath).readAsStringSync();
+    logger.i("Loaded the following configuration: $content");
     final json = jsonDecode(content);
     _configuration = Configuration.fromJson(json);
   }
+
   ///Takes a repositoryName as argument e.g: {github_user}/{repository_name}.
   ///Takes a branchName of the form /{branch_name} e.g.: /main.
   ConfigurationEntry? findEntry(String repositoryName, String branch) {
@@ -78,7 +86,9 @@ class ProcessService {
   ///Takes a pathToExecutable relative from the working directory
   Future<Stream<String>> launch(String pathToExecutable) async {
     final process = await Process.start("${Directory.current.path}/$pathToExecutable", [], mode: ProcessStartMode.detachedWithStdio);
-    process.stderr.transform(utf8.decoder).forEach((element) {logger.e(element);});
+    process.stderr.transform(utf8.decoder).forEach((element) {
+      logger.e(element);
+    });
     return process.stdout.transform<String>(utf8.decoder);
   }
 }

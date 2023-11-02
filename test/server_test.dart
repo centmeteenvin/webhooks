@@ -58,7 +58,15 @@ void main() {
   group('Test ProcessService', () {
   test('Test ProcessService().launch()', () async {
     final Stopwatch stopwatch = Stopwatch()..start();
-    final stream = await ProcessService().launch("test/resources/test.cmd");
+    final Stream<String> stream;
+    if (Platform.isWindows) {
+        stream = await ProcessService().launch("test/resources/test.cmd");
+    } else if (Platform.isLinux) {
+      stream = await ProcessService().launch("test/resources/test.sh");
+    } else  {
+      logger.e("This test wasn't run on windows or Linux");
+      return;
+    }
     String data = "";
     await for (final line in stream) {
       data += line;
